@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import ErrorObj from "../types/Error";
-import mongoose from "mongoose";
 import BankModel from "../database/models/Bank";
 import AccountSchemaModel from "../database/models/Account";
 import UserSchemaModel from "../database/models/User";
@@ -41,9 +40,7 @@ export const registerAccount = async (req: Request, res: Response) => {
 
     bank.number_account_serial = updateNumberSerialAccount;
 
-    bank.accounts.push(newAccount);
-
-    const updatebank = await bank.save();
+    await bank.save();
     const { password: passwordUser, ...userRegisted } = newUser;
 
     return res.json(userRegisted);

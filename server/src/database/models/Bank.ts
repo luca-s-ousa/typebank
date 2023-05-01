@@ -1,8 +1,4 @@
 import mongoose from "mongoose";
-import { AccountSchema } from "./Account";
-import { WithdrawalSchema } from "./Withdrawals";
-import { DepositSchema } from "./Deposits";
-import { TransferSchema } from "./Transfers";
 
 export const BankSchema = new mongoose.Schema({
   name: {
@@ -21,10 +17,6 @@ export const BankSchema = new mongoose.Schema({
     type: Number,
     unique: true,
   },
-  accounts: [AccountSchema],
-  withdrawals: [WithdrawalSchema],
-  deposits: [DepositSchema],
-  transfers: [TransferSchema],
 });
 
 const BankModel = mongoose.model("BankSchema", BankSchema);

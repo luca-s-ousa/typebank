@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const UserSchema = new mongoose.Schema({
+export const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   cpf: { type: String, required: true },
   date_of_birth: { type: Date, required: true },

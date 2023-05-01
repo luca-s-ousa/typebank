@@ -1,8 +1,10 @@
+import { Date } from "mongoose";
+
 export type User = {
-  name: String;
-  cpf: String;
+  name: string;
+  cpf: string;
   date_of_birth: Date;
-  phone: String;
-  username: String;
-  password: String;
+  phone: string;
+  username: string;
+  password: string;
 };

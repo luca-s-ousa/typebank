@@ -7,10 +7,6 @@ export const createDB = async (_: Request, res: Response) => {
     number: "1234",
     agency: "0001",
     number_account_serial: 0,
-    accounts: [],
-    withdrawals: [],
-    deposits: [],
-    transfers: [],
   });
 
   try {
