@@ -6,7 +6,7 @@ import {
 } from "./middlewares/users";
 import requestBody from "./middlewares/validateBody";
 import { schemaUserRegister } from "./schemas/users";
-import { registerAccount } from "./controllers/accounts";
+import { deleteAccount, registerAccount } from "./controllers/accounts";
 import { createDB } from "./controllers/db";
 import { updateUser } from "./controllers/users";
 
@@ -28,5 +28,7 @@ routes.put(
   requestBody(schemaUserRegister),
   updateUser
 );
+
+routes.delete("/account/:number_account", validateAccount, deleteAccount);
 
 export default routes;

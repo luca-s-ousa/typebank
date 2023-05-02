@@ -4,6 +4,7 @@ import ErrorObj from "../types/Error";
 import BankModel from "../database/models/Bank";
 import AccountSchemaModel from "../database/models/Account";
 import UserSchemaModel from "../database/models/User";
+import { Account } from "../types/Account";
 
 export const registerAccount = async (req: Request, res: Response) => {
   //   const jwtPass = process.env.JWT_PASS;
@@ -44,6 +45,30 @@ export const registerAccount = async (req: Request, res: Response) => {
     const { password: passwordUser, ...userRegisted } = newUser;
 
     return res.json(userRegisted);
+  } catch (error) {
+    const errorObj = error as ErrorObj;
+
+    return res.status(500).json({ message: errorObj.message });
+  }
+};
+
+export const deleteAccount = async (req: Request, res: Response) => {
+  try {
+    const account = (req as any).account as Account;
+
+    if (account.balance !== 0) {
+      return res
+        .status(401)
+        .json({ message: "A conta só pode ser removida se o saldo for zero!" });
+    }
+
+    await AccountSchemaModel.deleteOne({
+      number_account: account.number_account,
+    });
+
+    await UserSchemaModel.deleteOne({ username: account.user.username });
+
+    return res.status(200).json({ message: "Conta excluída com sucesso" });
   } catch (error) {
     const errorObj = error as ErrorObj;
 
