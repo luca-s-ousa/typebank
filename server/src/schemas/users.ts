@@ -47,3 +47,14 @@ export const schemaUserRegister = joi.object({
     "string.max": "O campo senha precisa ter no máximo 15 caracteres!",
   }),
 });
+
+export const schemaUserLogin = joi.object({
+  username: joi.string().required().messages({
+    "any.required": "Por favor preencha o campo email!",
+    "string.empty": "Por favor preencha o campo email!",
+  }),
+  password: joi.string().required().messages({
+    "any.required": "Por favor preencha o campo senha!",
+    "string.empty": "Por favor preencha o campo senha!",
+  }),
+});

@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction } from "express";
+import bcrypt from "bcrypt";
 import ErrorObj from "../types/Error";
 import UserSchemaModel from "../database/models/User";
 import { Account } from "../types/Account";
+import { User } from "../types/User";
 
 export const validateExistsUser = async (
   req: Request,
@@ -56,6 +58,39 @@ export const validateExistsUserUpdate = async (
     next();
   } catch (error) {
     const errorObj = error as ErrorObj;
+    return res.status(500).json({ message: errorObj.message });
+  }
+};
+
+export const validateUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { username, password } = req.body;
+
+  try {
+    const validUser = await UserSchemaModel.findOne({ username });
+
+    if (!validUser) {
+      return res.status(400).json({ message: "Username ou senha inválidos!" });
+    }
+
+    const passType = password as string;
+    const encryptedPassword = validUser.password as string;
+
+    const validPass = await bcrypt.compare(passType, encryptedPassword);
+
+    if (!validPass) {
+      return res.status(400).json({ message: "Username ou senha inválidos!" });
+    }
+
+    (req as any).authorizeUser = validUser;
+
+    next();
+  } catch (error) {
+    const errorObj = error as ErrorObj;
+
     return res.status(500).json({ message: errorObj.message });
   }
 };

@@ -3,12 +3,13 @@ import { validateAccount } from "./middlewares/accounts";
 import {
   validateExistsUser,
   validateExistsUserUpdate,
+  validateUser,
 } from "./middlewares/users";
 import requestBody from "./middlewares/validateBody";
-import { schemaUserRegister } from "./schemas/users";
+import { schemaUserLogin, schemaUserRegister } from "./schemas/users";
 import { deleteAccount, registerAccount } from "./controllers/accounts";
 import { createDB } from "./controllers/db";
-import { updateUser } from "./controllers/users";
+import { loginUser, updateUser } from "./controllers/users";
 
 const routes = Router();
 
@@ -21,11 +22,13 @@ routes.post(
   registerAccount
 );
 
+routes.post("/login", requestBody(schemaUserLogin), validateUser, loginUser);
+
 routes.put(
   "/account/:number_account/user",
   validateAccount,
-  validateExistsUserUpdate,
   requestBody(schemaUserRegister),
+  validateExistsUserUpdate,
   updateUser
 );
 
