@@ -52,6 +52,8 @@ export const validateExistsUserUpdate = async (
         return res.status(400).json({ message: "CPF já registrado!" });
       }
     }
+
+    next();
   } catch (error) {
     const errorObj = error as ErrorObj;
     return res.status(500).json({ message: errorObj.message });

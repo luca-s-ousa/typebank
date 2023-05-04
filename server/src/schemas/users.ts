@@ -38,7 +38,7 @@ export const schemaUserRegister = joi.object({
     .messages({
       "any.required": "Preencha o campo telefone",
       "string.empty": "Preencha o campo telefone",
-      "string.pattern.base": "CPF inválido",
+      "string.pattern.base": "Número de telefone inválido",
     }),
   password: joi.string().min(7).max(15).required().messages({
     "any.required": "Preencha o campo senha",
