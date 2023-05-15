@@ -10,6 +10,7 @@ import { schemaUserLogin, schemaUserRegister } from "./schemas/users";
 import { deleteAccount, registerAccount } from "./controllers/accounts";
 import { createDB } from "./controllers/db";
 import { loginUser, updateUser } from "./controllers/users";
+import { authenticateUser } from "./middlewares/authentication";
 
 const routes = Router();
 
@@ -26,12 +27,18 @@ routes.post("/login", requestBody(schemaUserLogin), validateUser, loginUser);
 
 routes.put(
   "/account/:number_account/user",
+  authenticateUser,
   validateAccount,
   requestBody(schemaUserRegister),
   validateExistsUserUpdate,
   updateUser
 );
 
-routes.delete("/account/:number_account", validateAccount, deleteAccount);
+routes.delete(
+  "/account/:number_account",
+  authenticateUser,
+  validateAccount,
+  deleteAccount
+);
 
 export default routes;

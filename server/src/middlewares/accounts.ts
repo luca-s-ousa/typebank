@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import ErrorObj from "../types/Error";
-import UserSchemaModel from "../database/models/User";
-import AccountSchemaModel, { AccountSchema } from "../database/models/Account";
+import AccountSchemaModel from "../database/models/Account";
 
 export const validateAccount = async (
   req: Request,
@@ -21,5 +20,9 @@ export const validateAccount = async (
     (req as any).account = findAccount;
 
     next();
-  } catch (error) {}
+  } catch (error) {
+    const errorObj = error as ErrorObj;
+
+    return res.status(500).json({ message: errorObj.message });
+  }
 };

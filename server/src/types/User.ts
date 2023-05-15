@@ -8,3 +8,7 @@ export type User = {
   username: string;
   password: string;
 };
+
+export type VerifyUser = {
+  username: string;
+};
