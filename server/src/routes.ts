@@ -11,6 +11,8 @@ import { deleteAccount, registerAccount } from "./controllers/accounts";
 import { createDB } from "./controllers/db";
 import { loginUser, updateUser } from "./controllers/users";
 import { authenticateUser } from "./middlewares/authentication";
+import { schemaDeposit } from "./schemas/transactions";
+import { deposit } from "./controllers/transactions";
 
 const routes = Router();
 
@@ -39,6 +41,13 @@ routes.delete(
   authenticateUser,
   validateAccount,
   deleteAccount
+);
+
+routes.post(
+  "/transactions/deposit/:number_account",
+  validateAccount,
+  requestBody(schemaDeposit),
+  deposit
 );
 
 export default routes;
