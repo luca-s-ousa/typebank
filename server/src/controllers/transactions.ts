@@ -3,11 +3,21 @@ import ErrorObj from "../types/Error";
 import DepositModel from "../database/models/Deposits";
 import { Deposit } from "../types/Deposit";
 import { dateAndHours } from "../functions/util/formatData";
+import { Account } from "../types/Account";
+import AccountSchemaModel from "../database/models/Account";
+import WithdrawalsModel from "../database/models/Withdrawals";
 
 export const deposit = async (req: Request, res: Response) => {
   const { value } = req.body;
   const { number_account } = req.params;
+  const { balance } = (req as any).account as Account;
+
   try {
+    await AccountSchemaModel.updateOne(
+      { number_account },
+      { $set: { balance: balance + Number(value) } }
+    );
+
     const newDeposit = new DepositModel({
       number_account: Number(number_account),
       value: Number(value),
@@ -27,6 +37,34 @@ export const deposit = async (req: Request, res: Response) => {
     };
 
     return res.json(depositData);
+  } catch (error) {
+    const errorObj = error as ErrorObj;
+
+    return res.status(500).json({ message: errorObj.message });
+  }
+};
+
+export const toWithdraw = async (req: Request, res: Response) => {
+  const { value } = req.body;
+  const { balance, number_account } = (req as any).account as Account;
+  const newBalance: number = balance - Number(value);
+
+  try {
+    await AccountSchemaModel.updateOne(
+      { number_account },
+      { $set: { balance: newBalance } }
+    );
+
+    const dataWithdraw = new WithdrawalsModel({
+      value: Number(value),
+      number_account,
+    });
+
+    const registerWithdraw: any = await dataWithdraw.save();
+
+    const dateFormatted = dateAndHours(registerWithdraw.date as Date);
+
+    return res.json({ date: dateFormatted, number_account, value });
   } catch (error) {
     const errorObj = error as ErrorObj;
 

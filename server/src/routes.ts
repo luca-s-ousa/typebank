@@ -11,8 +11,9 @@ import { deleteAccount, registerAccount } from "./controllers/accounts";
 import { createDB } from "./controllers/db";
 import { loginUser, updateUser } from "./controllers/users";
 import { authenticateUser } from "./middlewares/authentication";
-import { schemaDeposit } from "./schemas/transactions";
-import { deposit } from "./controllers/transactions";
+import { schemaDeposit, schemaToWithdraw } from "./schemas/transactions";
+import { deposit, toWithdraw } from "./controllers/transactions";
+import { validateToWithdraw } from "./middlewares/transactions";
 
 const routes = Router();
 
@@ -48,6 +49,14 @@ routes.post(
   validateAccount,
   requestBody(schemaDeposit),
   deposit
+);
+
+routes.post(
+  "/transactions/to-withdraw",
+  authenticateUser,
+  requestBody(schemaToWithdraw),
+  validateToWithdraw,
+  toWithdraw
 );
 
 export default routes;
