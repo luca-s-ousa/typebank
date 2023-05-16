@@ -34,14 +34,16 @@ export const updateUser = async (req: Request, res: Response) => {
 
   const { name, username, cpf, date_of_birth, phone, password } = req.body;
 
+  const [day, month, year] = date_of_birth.split("-");
+
   try {
     const encryptedPassword = await bcrypt.hash(password, 10);
 
-    const userUpdate: User = {
+    const userUpdate = {
       name,
       username,
       cpf,
-      date_of_birth,
+      date_of_birth: new Date(`${year}-${month}-${day}`),
       phone,
       password: encryptedPassword,
     };

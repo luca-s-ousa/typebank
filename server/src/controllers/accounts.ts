@@ -22,12 +22,14 @@ export const registerAccount = async (req: Request, res: Response) => {
     const numberSerial = bank.number_account_serial as number;
     const updateNumberSerialAccount = numberSerial + 1;
 
+    const [day, month, year] = date_of_birth.split("-");
+
     const newUser = {
       name,
       username,
       cpf,
       phone,
-      date_of_birth,
+      date_of_birth: new Date(`${year}-${month}-${day}`),
       password: encryptedPassword,
     };
 
