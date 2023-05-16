@@ -5,6 +5,7 @@ import BankModel from "../database/models/Bank";
 import AccountSchemaModel from "../database/models/Account";
 import UserSchemaModel from "../database/models/User";
 import { Account } from "../types/Account";
+import { User } from "../types/User";
 
 export const registerAccount = async (req: Request, res: Response) => {
   //   const jwtPass = process.env.JWT_PASS;
@@ -69,6 +70,23 @@ export const deleteAccount = async (req: Request, res: Response) => {
     await UserSchemaModel.deleteOne({ username: account.user.username });
 
     return res.status(200).json({ message: "Conta excluída com sucesso" });
+  } catch (error) {
+    const errorObj = error as ErrorObj;
+
+    return res.status(500).json({ message: errorObj.message });
+  }
+};
+
+export const checkBalance = async (req: Request, res: Response) => {
+  const { username } = (req as any).userLogged as User;
+  try {
+    const account: unknown = await AccountSchemaModel.findOne({
+      "user.username": username,
+    });
+
+    const { balance } = account as Account;
+
+    return res.json({ balance: Number(balance.toFixed(2)) });
   } catch (error) {
     const errorObj = error as ErrorObj;
 

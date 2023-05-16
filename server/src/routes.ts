@@ -7,7 +7,11 @@ import {
 } from "./middlewares/users";
 import requestBody from "./middlewares/validateBody";
 import { schemaUserLogin, schemaUserRegister } from "./schemas/users";
-import { deleteAccount, registerAccount } from "./controllers/accounts";
+import {
+  checkBalance,
+  deleteAccount,
+  registerAccount,
+} from "./controllers/accounts";
 import { createDB } from "./controllers/db";
 import { loginUser, updateUser } from "./controllers/users";
 import { authenticateUser } from "./middlewares/authentication";
@@ -58,5 +62,7 @@ routes.post(
   validateToWithdraw,
   toWithdraw
 );
+
+routes.get("/account/balance", authenticateUser, checkBalance);
 
 export default routes;
