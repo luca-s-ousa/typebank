@@ -5,7 +5,8 @@ export const dateAndHours = (moment: Date) => {
   )}-${String(moment.getDate()).padStart(
     2,
     "0"
-  )}  ${moment.getHours()}:${moment.getMinutes()}:${String(
-    moment.getSeconds()
-  ).padStart(2, "0")}`;
+  )}  ${moment.getHours()}:${String(moment.getMinutes()).padStart(
+    2,
+    "0"
+  )}:${String(moment.getSeconds()).padStart(2, "0")}`;
 };

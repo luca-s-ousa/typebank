@@ -6,6 +6,7 @@ import { dateAndHours } from "../functions/util/formatData";
 import { Account } from "../types/Account";
 import AccountSchemaModel from "../database/models/Account";
 import WithdrawalsModel from "../database/models/Withdrawals";
+import TransferModel from "../database/models/Transfers";
 
 export const deposit = async (req: Request, res: Response) => {
   const { value } = req.body;
@@ -65,6 +66,59 @@ export const toWithdraw = async (req: Request, res: Response) => {
     const dateFormatted = dateAndHours(registerWithdraw.date as Date);
 
     return res.json({ date: dateFormatted, number_account, value });
+  } catch (error) {
+    const errorObj = error as ErrorObj;
+
+    return res.status(500).json({ message: errorObj.message });
+  }
+};
+
+export const transfer = async (req: Request, res: Response) => {
+  const { value } = req.body;
+  const {
+    balance: balance_user_logged,
+    number_account: number_account_user_logged,
+  } = (req as any).account as Account;
+
+  const {
+    balance: balance_user_dest,
+    number_account: number_account_user_dest,
+  } = (req as any).account_destination as Account;
+
+  const new_balance_user_logged = balance_user_logged - Number(value);
+  const new_balance_user_dest = balance_user_dest + Number(value);
+
+  try {
+    await AccountSchemaModel.updateOne(
+      {
+        number_account: number_account_user_logged,
+      },
+      { $set: { balance: new_balance_user_logged } }
+    );
+
+    await AccountSchemaModel.updateOne(
+      {
+        number_account: number_account_user_dest,
+      },
+      { $set: { balance: new_balance_user_dest } }
+    );
+
+    const transfer = new TransferModel({
+      destination_account_number: number_account_user_dest,
+      source_account_number: number_account_user_logged,
+      value: Number(value),
+    });
+
+    const registerTransfer = await transfer.save();
+
+    const dateFormatted = dateAndHours(registerTransfer.date);
+
+    return res.json({
+      date: dateFormatted,
+      source_account_number: number_account_user_logged,
+      destination_account_number: number_account_user_dest,
+      value: Number(value),
+    });
   } catch (error) {
     const errorObj = error as ErrorObj;
 
