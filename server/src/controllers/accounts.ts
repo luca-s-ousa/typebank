@@ -4,8 +4,16 @@ import ErrorObj from "../types/Error";
 import BankModel from "../database/models/Bank";
 import AccountSchemaModel from "../database/models/Account";
 import UserSchemaModel from "../database/models/User";
+import DepositModel from "../database/models/Deposits";
 import { Account } from "../types/Account";
 import { User } from "../types/User";
+import { Deposit } from "../types/Deposit";
+import { dateAndHours } from "../functions/util/formatData";
+import WithdrawalsModel from "../database/models/Withdrawals";
+import { Withdraw } from "../types/Withdraw";
+import TransferModel from "../database/models/Transfers";
+import { Transfer } from "../types/Transfer";
+import { deposits, transfers, withdrawals } from "../functions/account/extract";
 
 export const registerAccount = async (req: Request, res: Response) => {
   //   const jwtPass = process.env.JWT_PASS;
@@ -89,6 +97,37 @@ export const checkBalance = async (req: Request, res: Response) => {
     const { balance } = account as Account;
 
     return res.json({ balance: Number(balance.toFixed(2)) });
+  } catch (error) {
+    const errorObj = error as ErrorObj;
+
+    return res.status(500).json({ message: errorObj.message });
+  }
+};
+
+export const extractAccount = async (req: Request, res: Response) => {
+  const { username } = (req as any).userLogged as User;
+
+  try {
+    const account: unknown = await AccountSchemaModel.findOne({
+      "user.username": username,
+    });
+
+    const { number_account } = account as Account;
+
+    const formatDeposits = await deposits(number_account);
+
+    const formatWithdrawals = await withdrawals(number_account);
+
+    const incomingTransfers = await transfers(number_account, false);
+
+    const sentTransfers = await transfers(number_account, true);
+
+    return res.json({
+      deposits: formatDeposits,
+      withdrawals: formatWithdrawals,
+      incomingTransfers: incomingTransfers,
+      sentTransfers: sentTransfers,
+    });
   } catch (error) {
     const errorObj = error as ErrorObj;
 

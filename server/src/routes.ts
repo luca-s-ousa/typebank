@@ -10,6 +10,7 @@ import { schemaUserLogin, schemaUserRegister } from "./schemas/users";
 import {
   checkBalance,
   deleteAccount,
+  extractAccount,
   registerAccount,
 } from "./controllers/accounts";
 import { createDB } from "./controllers/db";
@@ -79,5 +80,7 @@ routes.post(
 );
 
 routes.get("/account/balance", authenticateUser, checkBalance);
+
+routes.get("/account/extract", authenticateUser, extractAccount);
 
 export default routes;

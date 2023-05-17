@@ -34,7 +34,7 @@ export const deposit = async (req: Request, res: Response) => {
       date: dateDepositFormatted,
       number_account: response.number_account,
       value: response.value,
-      _id: deposit._id as string,
+      _id: response._id,
     };
 
     return res.json(depositData);
